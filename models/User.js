@@ -6,13 +6,13 @@ const { func } = require("joi");
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, "must provide name"],
+    required: [true, "you must provide name"],
     minlength: 3,
     maxlength: 50,
   },
   email: {
     type: String,
-    required: [true, "must privide email"],
+    required: [true, "you must provide email"],
     minlength: 3,
     maxlength: 50,
     match: [
