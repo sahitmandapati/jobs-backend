@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { func } = require("joi");
+// const { func } = require("joi");
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -21,6 +21,11 @@ const UserSchema = new mongoose.Schema({
     ],
     unique: true,
   },
+  accountType :{
+    type : String,
+    enum : ['poster','applier'],
+    default : 'applier'
+  },
   password: {
     type: String,
     required: [true, "must provide password"],
@@ -39,7 +44,7 @@ UserSchema.pre("save", async function () {
 
 UserSchema.methods.createJWT = function () {
   return jwt.sign(
-    { userId: this._id, name: this.name },
+    { userId: this._id, name: this.name , accountType: this.accountType },
     process.env.JWT_SECRET,
     {
       expiresIn: process.env.JWT_LIFETIME,

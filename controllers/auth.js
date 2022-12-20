@@ -28,10 +28,11 @@ const register = async (req, res) => {
   //   expiresIn: "30d",
   // });
 
-  res.status(StatusCodes.CREATED).json({ user: { name: user.name }, token });
+  res.status(StatusCodes.CREATED).json({ user: { name: user.name , accountType : user.accountType }, token });
 };
 
 const login = async (req, res) => {
+  // console.log(req.body)
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -54,7 +55,7 @@ const login = async (req, res) => {
   //compare password
 
   const token = user.createJWT();
-  res.status(StatusCodes.OK).json({ user: { name: user.name }, token });
+  res.status(StatusCodes.OK).json({ user: { name: user.name , accountType : user.accountType }, token});
 
   // res.send("login user");
 };
