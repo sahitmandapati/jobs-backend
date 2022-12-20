@@ -18,7 +18,7 @@ const authenticateUser = require('./middleware/authentication');
 
 const authRouter = require('./routes/auth')
 const jobsRouter = require('./routes/jobs')
-const applyJobsRouter = require('./routes/applyJobs')
+const applicationsRouter = require('./routes/applications')
 
 // error handler
 const notFoundMiddleware = require('./middleware/not-found');
@@ -48,7 +48,7 @@ app.use(xss())
 // routes
 
 app.use('/api/v1/auth',authRouter)
-app.use('/api/v1/apply',authenticateUser,applyJobsRouter)
+app.use('/api/v1/applications',authenticateUser,applicationsRouter)
 app.use('/api/v1/jobs', authenticateUser,jobsRouter) 
 
 
