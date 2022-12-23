@@ -15,6 +15,7 @@ const ApplicationsJobsSchema = new mongoose.Schema(
     jobId: {
       type: String,
       required: [true, "Please provide position jobId"],
+      unique: true,
     },
   },
   { timestamps: true }
