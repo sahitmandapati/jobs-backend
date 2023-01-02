@@ -84,6 +84,7 @@ const deleteJob = async (req, res) => {
       _id: jobId,
       createdBy: userId,
     });
+    // remove applications linked with job
 
     if (!job) {
       throw new NotFoundError(`No job with id ${jobId}`);

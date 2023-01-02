@@ -13,7 +13,8 @@ const ApplicationsJobsSchema = new mongoose.Schema(
       default: "pending",
     },
     jobId: {
-      type: String,
+      type: mongoose.Types.ObjectId,
+      ref:"Job",
       required: [true, "Please provide position jobId"],
       unique: true,
     },
