@@ -15,8 +15,7 @@ const ApplicationsJobsSchema = new mongoose.Schema(
     jobId: {
       type: mongoose.Types.ObjectId,
       ref:"Job",
-      required: [true, "Please provide position jobId"],
-      unique: true,
+      required: [true, "Please provide position jobId"]
     },
   },
   { timestamps: true }
