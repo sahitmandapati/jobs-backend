@@ -9,19 +9,6 @@ const {
 
 const Applications = require("../models/Applications");
 
-const getAllJobs = async (req, res) => {
-  // console.log(req.user);
-
-  if (req.user.accountType === "applier") {
-    const jobs = await Job.find({});
-    res.status(StatusCodes.OK).json({ jobs, count: jobs.length });
-  } else {
-    throw new UnauthenticatedError(
-      "You have not logged in as user to view jobs"
-    );
-  }
-};
-
 // {
 //   userId: '63a152c37eae304820f8c4e5',
 //   name: 'peter',
@@ -71,7 +58,6 @@ const updateApplicationStatus = async (req, res) => {
 };
 
 module.exports = {
-  getAllJobs,
   createApplication,
   updateApplicationStatus,
 };

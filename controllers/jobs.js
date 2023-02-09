@@ -6,6 +6,19 @@ const {
   UnauthenticatedError,
 } = require("../errors");
 
+const getAllJobsForApplier = async (req, res) => {
+  // console.log(req.user);
+
+  if (req.user.accountType === "applier") {
+    const jobs = await Job.find({});
+    res.status(StatusCodes.OK).json({ jobs, count: jobs.length });
+  } else {
+    throw new UnauthenticatedError(
+      "You have not logged in as user to view jobs"
+    );
+  }
+};
+
 const getAllJobsForJobPoster = async (req, res) => {
   if (req.user.accountType === "poster") {
     const jobs = await Job.find({ createdBy: req.user.userId });
@@ -96,6 +109,7 @@ const deleteJob = async (req, res) => {
 };
 
 module.exports = {
+  getAllJobsForApplier,
   getAllJobsForJobPoster,
   getJobForJobPoster,
   createJob,
