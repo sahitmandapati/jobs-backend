@@ -60,9 +60,9 @@ const getApplicationsForPoster = async (req, res) => {
       },
     ];
 
-    const applications = await Applications.aggregate(aggregationQuery);
+    const applicationsWithJobs = await Applications.aggregate(aggregationQuery);
 
-    res.status(StatusCodes.CREATED).json({ applications });
+    res.status(StatusCodes.CREATED).json({ applicationsWithJobs });
   } else {
     throw new UnauthenticatedError(
       "You have not logged in as a poster to view job applications"
