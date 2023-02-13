@@ -1,4 +1,5 @@
 const Job = require("../models/Job");
+const { ObjectId } = require("mongodb");
 
 const { StatusCodes } = require("http-status-codes");
 const {
@@ -20,16 +21,51 @@ const getApplicationsForApplier = async (req, res) => {
     const applicationsForApplier = await Applications.find({
       userId: req.user.userId,
     });
-    const jobIds = applicationsForApplier.map(application => application.jobId);
+    const jobIds = applicationsForApplier.map(
+      (application) => application.jobId
+    );
     const jobs = await Job.find({ _id: { $in: jobIds } });
-    const applicationsWithJobs = applicationsForApplier.map(application => {
-      const job = jobs.find(job => job._id.toString() === application.jobId.toString());
+    const applicationsWithJobs = applicationsForApplier.map((application) => {
+      const job = jobs.find(
+        (job) => job._id.toString() === application.jobId.toString()
+      );
       return { ...application._doc, job };
     });
     res.status(StatusCodes.CREATED).json({ applicationsWithJobs });
   } else {
     throw new UnauthenticatedError(
       "You have not logged in as user to apply jobs"
+    );
+  }
+};
+
+const getApplicationsForPoster = async (req, res) => {
+  if (req.user.accountType === "poster") {
+    const jobsForPoster = await Job.find({
+      createdBy: req.user.userId,
+    });
+    const jobIds = jobsForPoster.map((job) => new ObjectId(job._id));
+
+    const aggregationQuery = [
+      {
+        $match: { jobId: { $in: jobIds } },
+      },
+      {
+        $lookup: {
+          from: "jobs",
+          localField: "jobId",
+          foreignField: "_id",
+          as: "job",
+        },
+      },
+    ];
+
+    const applications = await Applications.aggregate(aggregationQuery);
+
+    res.status(StatusCodes.CREATED).json({ applications });
+  } else {
+    throw new UnauthenticatedError(
+      "You have not logged in as a poster to view job applications"
     );
   }
 };
@@ -77,6 +113,7 @@ const updateApplicationStatus = async (req, res) => {
 
 module.exports = {
   getApplicationsForApplier,
+  getApplicationsForPoster,
   createApplication,
   updateApplicationStatus,
 };
