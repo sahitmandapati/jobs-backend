@@ -15,6 +15,25 @@ const Applications = require("../models/Applications");
 //   accountType: 'applier'
 // }
 
+const getApplicationsForApplier = async (req, res) => {
+  if (req.user.accountType === "applier") {
+    const applicationsForApplier = await Applications.find({
+      userId: req.user.userId,
+    });
+    const jobIds = applicationsForApplier.map(application => application.jobId);
+    const jobs = await Job.find({ _id: { $in: jobIds } });
+    const applicationsWithJobs = applicationsForApplier.map(application => {
+      const job = jobs.find(job => job._id.toString() === application.jobId.toString());
+      return { ...application._doc, job };
+    });
+    res.status(StatusCodes.CREATED).json({ applicationsWithJobs });
+  } else {
+    throw new UnauthenticatedError(
+      "You have not logged in as user to apply jobs"
+    );
+  }
+};
+
 const createApplication = async (req, res) => {
   // console.log(req.user)
   if (req.user.accountType === "applier") {
@@ -45,11 +64,10 @@ const updateApplicationStatus = async (req, res) => {
       { new: true, runValidators: true }
     );
 
-    if(!applications){
+    if (!applications) {
       throw new NotFoundError(`No job with id ${jobId}`);
     }
     res.status(StatusCodes.OK).json({ applications });
-
   } else {
     throw new UnauthenticatedError(
       "You do not have enough priviliges to perform this action"
@@ -58,6 +76,7 @@ const updateApplicationStatus = async (req, res) => {
 };
 
 module.exports = {
+  getApplicationsForApplier,
   createApplication,
   updateApplicationStatus,
 };
